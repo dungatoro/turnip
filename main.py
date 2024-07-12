@@ -24,7 +24,7 @@ class Machine:
         """
         lines = src.strip().split('\n')
         finding_grid = True
-        grid = []
+        self.grid = []
         idx = 0
         while finding_grid:
             line = lines[idx]
@@ -33,7 +33,7 @@ class Machine:
                     print(line)
                     raise Exception("Grid has inconsistent row lenghts!")
                 else:
-                    grid.append(list(line))
+                    self.grid.append(list(line))
             else:
                 finding_grid = False
             idx += 1
@@ -91,5 +91,8 @@ write1{.<vsub1|01<write0|11<write1}
 machine = Machine(src=src)
 print(src)
 print(machine.table)
+print(machine.state)
+print(machine.x, machine.y)
+print(machine.grid)
 
 
