@@ -1,5 +1,6 @@
 import re
 import os
+import sys
 
 class Machine:
     r"""
@@ -123,17 +124,7 @@ class Machine:
             input('\n')
         print('\033[91mHALT!\033[0m')
 
-src = r"""
-.........
-.00010110
-.00000011
-.........
-sub1(8,2)
-sub1{._|01<sub1|10<pass}
-pass{.^<write0|0<pass|1<pass}
-write0{.<vsub1|00<write0|10<write1}
-write1{.<vsub1|01<write0|11<write1}
-"""
-
-machine = Machine(src=src)
-machine.run()
+with open(sys.argv[1], 'r') as f:
+    src = f.read()
+    machine = Machine(src=src)
+    machine.run()
