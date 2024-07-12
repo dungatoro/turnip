@@ -1,5 +1,4 @@
 import re
-import os
 
 class Machine:
     r"""
@@ -45,7 +44,7 @@ class Machine:
         try:
             self.state = start_state
             self.x = int(x)
-            self.y = int(y)
+            self.y = len(self.grid)-1-int(y)
         except:
             raise Exception("Start state and coordinates not found!")
 
@@ -79,53 +78,10 @@ class Machine:
 
             self.table[state] = transition_table
 
-    def run(self):
-        os.system('cls' if os.name == 'nt' else 'clear')
-        print(f'{self.state}({self.x},{self.y})')
-        for y, row in enumerate(self.grid):
-            s = ""
-            for x, c in enumerate(row):
-                if x == self.x and y == self.y:
-                    s += f"\033[91m{c}\033[0m"
-                else:
-                    s += c
-            print(s)
-        input('\n')
-        while self.state != '_':
-            ip = self.grid[self.y][self.x]
-            code, new_state = self.table[self.state][ip]
-
-    
-            for c in code:
-                if c in '.01':
-                    self.grid[self.y][self.x] = c
-                elif c == '^':
-                    self.y = (self.y-1)%len(self.grid)
-                elif c == 'v':
-                    self.y = (self.y+1)%len(self.grid)
-                elif c == '<':
-                    self.x = (self.x-1)%len(self.grid[0])
-                elif c == '>':
-                    self.x = (self.x+1)%len(self.grid[0])
-
-            self.state = new_state
-
-            os.system('cls' if os.name == 'nt' else 'clear')
-            print(f'{self.state}({self.x},{self.y})')
-            for y, row in enumerate(self.grid):
-                s = ""
-                for x, c in enumerate(row):
-                    if x == self.x and y == self.y:
-                        s += f"\033[91m{c}\033[0m"
-                    else:
-                        s += c
-                print(s)
-            input('\n')
-
 src = r"""
 .00010110
 .00000011
-sub1(8,1)
+sub1(8,0)
 sub1{._|01<sub1|10<pass}
 pass{.^<write0|0<pass|1<pass}
 write0{.<vsub1|00<write0|10<write1}
@@ -133,4 +89,10 @@ write1{.<vsub1|01<write0|11<write1}
 """
 
 machine = Machine(src=src)
-machine.run()
+print(src)
+print(machine.table)
+print(machine.state)
+print(machine.x, machine.y)
+print(machine.grid)
+
+
