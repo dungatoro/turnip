@@ -51,7 +51,7 @@ class Machine:
             raise Exception("Start state and coordinates not found!")
 
         """ Find all the state transition table definitions """
-        state_syntax = r"[a-zA-Z_]\w*\s*\{(?:\s*[.01]\s*[.01^v<>\s]*[a-zA-Z_]\w*\s*\|){0,2}\s*[.01]\s*[.01^v<>\s]*[a-zA-Z_]\w*\s*}"
+        state_syntax = r"[a-zA-Z_]\w*\s*\{(?:\s*[.01]\s*[.01^;<>\s]*[a-zA-Z_]\w*\s*\|){0,2}\s*[.01]\s*[.01^;<>\s]*[a-zA-Z_]\w*\s*}"
         state_defs = re.findall(state_syntax, src)
 
         for state_def in state_defs:
@@ -69,7 +69,7 @@ class Machine:
                 while finding_new_state:
                     if idx >= len(transition):
                         raise Exception("Missing new state transition!")
-                    elif transition[idx] not in ".01^v<>\r\n\t\f\v ":
+                    elif transition[idx] not in ".01^;<>\r\n\t\f\v ":
                         finding_new_state = False
                     else:
                         idx += 1
@@ -102,7 +102,7 @@ class Machine:
                     self.grid[self.y][self.x] = c
                 elif c == '^':
                     self.y = (self.y-1)%len(self.grid)
-                elif c == 'v':
+                elif c == ';':
                     self.y = (self.y+1)%len(self.grid)
                 elif c == '<':
                     self.x = (self.x-1)%len(self.grid[0])
