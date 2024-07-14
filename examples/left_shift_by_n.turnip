@@ -5,5 +5,5 @@
 sub1(8,2)
 sub1{._|01<sub1|10<pass}
 pass{.^<write0|0<pass|1<pass}
-write0{.<vsub1|00<write0|10<write1}
-write1{.<vsub1|01<write0|11<write1}
+write0{.<!sub1|00<write0|10<write1}
+write1{.<!sub1|01<write0|11<write1}
