@@ -85,12 +85,20 @@ class Machine:
                 self.x = (self.x+1)%len(self.grid[0])
         self.state = new_state
 
+    def __nippy(self):
+        print(fr"""
+     \\/_    In state `{self.state}`
+    / ~ _ \  At position ({self.x},{self.y})
+    \ ' ' /
+      \ / 
+        """)
+
     def steps(self):
         while self.state != '_':
             os.system('cls' if os.name == 'nt' else 'clear')
-            print(f'{self.state}({self.x},{self.y})')
+            self.__nippy()
             for y, row in enumerate(self.grid):
-                s = ""
+                s = " "
                 for x, c in enumerate(row):
                     if x == self.x and y == self.y:
                         s += f"\033[91m{c}\033[0m"
