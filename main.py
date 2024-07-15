@@ -6,6 +6,7 @@ class Machine:
     def __init__(self, *, src=""):
         # table = { state: { input: (code, new_state), ... }, ... }
         self.table = {}
+        self.steps = 0
 
         """ 
         Find the grid e.g.
@@ -84,6 +85,7 @@ class Machine:
             elif c == '>':
                 self.x = (self.x+1)%len(self.grid[0])
         self.state = new_state
+        self.steps += 1
 
     def __nippy(self):
         print(fr"""
@@ -93,7 +95,7 @@ class Machine:
       \ / 
         """)
 
-    def steps(self):
+    def manual(self):
         while self.state != '_':
             os.system('cls' if os.name == 'nt' else 'clear')
             self.__nippy()
@@ -109,7 +111,32 @@ class Machine:
             input('\n')
         print('\033[91mHALT!\033[0m')
 
-with open(sys.argv[1], 'r') as f:
+    def quiet(self):
+        while self.state != '_':
+            self.__tick()
+        print(f"Halted after {self.steps} steps")
+        show = input("Show final state? (y/N) ")
+        if show.lower() in ['y', 'yes']:
+            for y, row in enumerate(self.grid):
+                s = " "
+                for x, c in enumerate(row):
+                    if x == self.x and y == self.y:
+                        s += f"\033[91m{c}\033[0m"
+                    else:
+                        s += c
+                print(s)
+
+
+
+path = sys.argv[1]
+with open(path, 'r') as f:
     src = f.read()
     machine = Machine(src=src)
-    machine.steps()
+
+flags = sys.argv[1:]
+if "--manual" in flags or "-m" in flags:
+    machine.manual()
+elif "--quiet" in flags or "-q" in flags:
+    machine.quiet()
+
+
