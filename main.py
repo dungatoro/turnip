@@ -3,26 +3,15 @@ import os
 import sys
 
 class Machine:
-    r"""
-        010
-        001
-        111
-        A(2,1)
-        A{01>0B .<1B 1\}
-        B{01>0A .<0>0B 1<\}
-    """
-
     def __init__(self, *, src=""):
-        """
-        table = { state: { 0: (code, new_state), ... }, ... }
-        """
+        # table = { state: { input: (code, new_state), ... }, ... }
         self.table = {}
 
         """ 
         Find the grid e.g.
-            010
-            001
-            111
+           1010
+           ..01
+           011.
         """
         lines = src.strip().split('\n')
         finding_grid = True
@@ -40,7 +29,7 @@ class Machine:
                 finding_grid = False
             idx += 1
 
-        """ Find the start state and coordinates e.g. A(2,1) """
+        # Find the start state and coordinates e.g. A(2,1)
         start_syntax = r"([a-zA-z]\w*.?)\(\s*(\d+.?)\s*,\s*(\d+.?)\s*\)"
         start_state, x, y = re.findall(start_syntax, src)[0]
         try:
@@ -50,7 +39,7 @@ class Machine:
         except:
             raise Exception("Start state and coordinates not found!")
 
-        """ Find all the state transition table definitions """
+        # Find all the state transition table definitions
         state_syntax = r"[a-zA-Z_]\w*\s*\{(?:\s*[.01]\s*[.01^!<>\s]*[a-zA-Z_]\w*\s*\|){0,2}\s*[.01]\s*[.01^!<>\s]*[a-zA-Z_]\w*\s*}"
         state_defs = re.findall(state_syntax, src)
 
@@ -80,37 +69,24 @@ class Machine:
 
             self.table[state] = transition_table
 
-    def run(self):
-        os.system('cls' if os.name == 'nt' else 'clear')
-        print(f'{self.state}({self.x},{self.y})')
-        for y, row in enumerate(self.grid):
-            s = ""
-            for x, c in enumerate(row):
-                if x == self.x and y == self.y:
-                    s += f"\033[91m{c}\033[0m"
-                else:
-                    s += c
-            print(s)
-        input('\n')
+    def __tick(self):
+        ip = self.grid[self.y][self.x]
+        code, new_state = self.table[self.state][ip]
+        for c in code:
+            if c in '.01':
+                self.grid[self.y][self.x] = c
+            elif c == '^':
+                self.y = (self.y-1)%len(self.grid)
+            elif c == '!':
+                self.y = (self.y+1)%len(self.grid)
+            elif c == '<':
+                self.x = (self.x-1)%len(self.grid[0])
+            elif c == '>':
+                self.x = (self.x+1)%len(self.grid[0])
+        self.state = new_state
+
+    def steps(self):
         while self.state != '_':
-            ip = self.grid[self.y][self.x]
-            code, new_state = self.table[self.state][ip]
-
-    
-            for c in code:
-                if c in '.01':
-                    self.grid[self.y][self.x] = c
-                elif c == '^':
-                    self.y = (self.y-1)%len(self.grid)
-                elif c == '!':
-                    self.y = (self.y+1)%len(self.grid)
-                elif c == '<':
-                    self.x = (self.x-1)%len(self.grid[0])
-                elif c == '>':
-                    self.x = (self.x+1)%len(self.grid[0])
-
-            self.state = new_state
-
             os.system('cls' if os.name == 'nt' else 'clear')
             print(f'{self.state}({self.x},{self.y})')
             for y, row in enumerate(self.grid):
@@ -121,10 +97,11 @@ class Machine:
                     else:
                         s += c
                 print(s)
+            self.__tick()
             input('\n')
         print('\033[91mHALT!\033[0m')
 
 with open(sys.argv[1], 'r') as f:
     src = f.read()
     machine = Machine(src=src)
-    machine.run()
+    machine.steps()
