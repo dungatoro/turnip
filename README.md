@@ -26,7 +26,7 @@ will be familiar if you have worked with screen coordinates. i.e.
 y
 ```
 
-### Defining States
+### Simple Example
 The logic for each state comes last. To explain this we will work through a 
 simple demo machine that simply goes right flipping every `0` to a `1` and every
 `1` to a `0`, stopping when it sees a `.`.
@@ -41,5 +41,9 @@ new state of the machine.
 
 In the third response there are no actions and we end on the state `_`, which
 represents the HALT state.
+
+### Syntax
+
+The possible movements are `<` (left), `>` (right), `!` (down), and `^` (up). 
 
 
