@@ -1,6 +1,7 @@
 import re
 import os
 import sys
+import time
 
 class Machine:
     def __init__(self, *, src=""):
@@ -126,7 +127,21 @@ class Machine:
                         s += c
                 print(s)
 
-
+    def auto(self, t):
+        while self.state != '_':
+            os.system('cls' if os.name == 'nt' else 'clear')
+            self.__nippy()
+            for y, row in enumerate(self.grid):
+                s = " "
+                for x, c in enumerate(row):
+                    if x == self.x and y == self.y:
+                        s += f"\033[91m{c}\033[0m"
+                    else:
+                        s += c
+                print(s)
+            self.__tick()
+            time.sleep(t)
+        print('\033[91mHALT!\033[0m')
 
 path = sys.argv[1]
 with open(path, 'r') as f:
@@ -138,5 +153,13 @@ if "--manual" in flags or "-m" in flags:
     machine.manual()
 elif "--quiet" in flags or "-q" in flags:
     machine.quiet()
-
+elif "--auto" in flags or "-a" in flags:
+    t = 0.1
+    if "time" in flags:
+        t = float(flags[flags.index("time")+1])
+    if "t" in flags:
+        t = float(flags[flags.index("t")+1])
+    machine.auto(t)
+else:
+    print("No valid flags provided!")
 
